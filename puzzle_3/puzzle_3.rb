@@ -12,22 +12,11 @@ end
 def check_part(index_y, index_x, length)
   neighbours = []
   left_edge = index_x == 0 ? 0 : index_x -1
-
-  if index_y > 0
-    neighbours << @file[index_y - 1][left_edge .. index_x + length]
-  end
-
-  if index_x > 0
-    neighbours << @file[index_y][index_x - 1]
-  end
-
-  if index_x + length < @file[index_y].length
-    neighbours << @file[index_y][index_x + length]
-  end
-
-  if @file.length > index_y + 1
-    neighbours <<  @file[index_y + 1][left_edge .. index_x + length]
-  end
+  
+  neighbours << @file[index_y - 1][left_edge .. index_x + length] if index_y > 0
+  neighbours << @file[index_y][index_x - 1] if index_x > 0
+  neighbours << @file[index_y][index_x + length] if index_x + length < @file[index_y].length
+  neighbours << @file[index_y + 1][left_edge .. index_x + length] if @file.length > index_y + 1
 
   !!neighbours.join()[/[^.a-zA-Z0-9\s]/]
 end
