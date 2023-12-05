@@ -1,6 +1,6 @@
-@file = File.readlines('./input.txt', chomp: true)
+file_lines = File.readlines('./input.txt', chomp: true)
 
-seeds = @file[0].split(' ')[1..-1]
+seeds = file_lines[0].split(' ')[1..-1]
 
 map_names  = [
               "seed-to-soil map:",
@@ -17,16 +17,14 @@ maps = {}
 
 map_names.each_with_index do |map, i|
   name = map.sub(' map:', '')
-  lower_boundary = (@file.index(map) + 1)
-  upper_boundary = (@file.index(map_names[i+1]) || @file.length)
-  raw_maps = @file[lower_boundary .. upper_boundary - 1].reject { |str| str.empty? }
-  maps[name] = []
-  raw_maps.each do |raw_map|
-    maps[name] << raw_map.split(" ").map(&:to_i)
-  end
+  lower_boundary = file_lines.index(map) + 1
+  upper_boundary = file_lines.index(map_names[i + 1]) || file_lines.length
+  raw_maps = file_lines[lower_boundary...upper_boundary].reject(&:empty?)
+  maps[name] = raw_maps.map { |raw_map| raw_map.split.map(&:to_i) }
 end
 
 locations = []
+
 seeds.each do |seed|
   pointer = seed.to_i
 
@@ -41,6 +39,7 @@ seeds.each do |seed|
       end
     end
   end
+  
   locations << pointer
 end
 
