@@ -1,25 +1,44 @@
-export function puzzleFour(cards: string[]): number {
-  let power = 0;
+export type Card = {
+  results?: string[];
+  winners?: string[];
+  score: number;
+  copies: number;
+};
+
+export function puzzleFourA(cards: string[]): number {
+  let parsedCards: Card[] = [];
   cards.forEach((card) => {
-    const [result, winners] = parseCard(card);
-    const winningNumbers = findWinners(result, winners);
-    if (winningNumbers.length > 0) {
-      power += Math.pow(2, winningNumbers.length - 1);
-    }
+    parsedCards.push(parseCard(card));
   });
-  return power;
+  processParsedCards(parsedCards);
+  return parsedCards.reduce((acc, card) => acc + card["copies"], 0);
 }
 
-export function parseCard(line: string): [string[], string[]] {
+export function parseCard(line: string): Card {
   const game = line.split(/[:|]/);
   const result = game[1].trim().split(" ");
   const winners = game[2].split(" ");
-  return [
-    result.filter((item) => item !== ""),
-    winners.filter((item) => item !== ""),
-  ];
+  return {
+    results: result.filter((item) => item !== ""),
+    winners: winners.filter((item) => item !== ""),
+    score: findWinners(
+      result.filter((item) => item !== ""),
+      winners.filter((item) => item !== "")
+    ).length,
+    copies: 1,
+  };
 }
 
 export function findWinners(result: string[], winners: string[]) {
   return result.filter((item) => winners.includes(item));
+}
+
+export function processParsedCards(cards: Card[]): Card[] {
+  const processedCards = cards;
+  for (let i = 0; i < cards.length; i++) {
+    for (let n = i; n < i + cards[i].score; n++) {
+      processedCards[n + 1].copies += cards[i].copies;
+    }
+  }
+  return processedCards;
 }
