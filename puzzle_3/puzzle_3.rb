@@ -43,7 +43,6 @@ end
 sum = 0
 
 @file.each_with_index do |line, index|
-  line << ['...']
   results = parse_symbols(line)
   results.each do |result|
     check_gear(index, result[:index])
