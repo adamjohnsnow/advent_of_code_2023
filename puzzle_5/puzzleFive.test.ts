@@ -16,16 +16,16 @@ describe("Puzzle 4", () => {
     });
   });
 
-  // test("long version", () => {
-  //   fs.readFile("puzzle_5/input.txt", "utf8", async (err, data) => {
-  //     if (err) {
-  //       console.error("Error reading the file:", err);
-  //       return 0;
-  //     }
-  //     const lines: string[] = data.split("\n");
-  //     const output = await run(lines);
+  test("long version", () => {
+    fs.readFile("puzzle_5/input.txt", "utf8", async (err, data) => {
+      if (err) {
+        console.error("Error reading the file:", err);
+        return 0;
+      }
+      const lines: string[] = data.split("\n");
+      const output = await run(lines);
 
-  //     expect(output).toEqual(46);
-  //   });
-  // });
+      expect(output).toEqual(46);
+    });
+  });
 });
