@@ -15,10 +15,9 @@ end
 
 def parse_symbols(line)
   symbols = []
-  line.scan(/[^.a-zA-Z0-9\s]/) do |match|
-    symbols << { symbol: match, index: Regexp.last_match.begin(0) }
+  line.each_char.with_index do |char, index|
+    symbols << { symbol: '*', index: index} if char == "*"
   end
-  
   symbols
 end
 
@@ -104,8 +103,9 @@ def check_gear(index_y, index_x)
       number.unshift(next_num)
       next_num = @file[index_y][index_x - 3]
       number.unshift(next_num)if is_digit(next_num)
-      numbers << number.join('').to_i
     end
+    numbers << number.join('').to_i
+
   end
 
   if is_digit(@file[index_y][index_x + 1])
@@ -115,8 +115,9 @@ def check_gear(index_y, index_x)
       number.push(next_num)
       next_num = @file[index_y][index_x + 3]
       number.push(next_num)if is_digit(next_num)
-      numbers << number.join('').to_i
+      
     end
+    numbers << number.join('').to_i
   end
   ratio = numbers.length > 1 ? numbers[0] * numbers[1] : 0
   p "#{numbers} = #{ratio} at #{index_y}, #{index_x}" if numbers.length > 1
@@ -125,12 +126,16 @@ end
 
 sum = 0
 gears = 0
+symbol_list = []
 
 @file.each_with_index do |line, index|
+  line_gears = 0
   results = parse_symbols(line)
   results.each do |result|
-    gears += check_gear(index, result[:index])
+    symbol_list << result[:symbol]
+    line_gears += check_gear(index, result[:index])
   end
+  gears += line_gears
 
   results = parse_line(line)
   results.each do |result|
