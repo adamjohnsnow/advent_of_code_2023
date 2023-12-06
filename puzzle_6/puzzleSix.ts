@@ -14,10 +14,3 @@ export function waysToWin(raceTime: number, distance: number): number {
   }
   return winners.length;
 }
-
-function multiplyArray(numbers) {
-  return numbers.reduce(
-    (accumulator, currentValue) => accumulator * currentValue,
-    1
-  );
-}
