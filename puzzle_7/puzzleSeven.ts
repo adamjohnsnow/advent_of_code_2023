@@ -5,15 +5,24 @@ type Output = {
   count: number;
 };
 
+type ProcessedHand = { hand: string; wager: number; rank: number };
+export function processCards(hands: string[]) {
+  let output: ProcessedHand[] = [];
+  hands.forEach((hand) => {
+    const split = hand.split(" ");
+    output.push({
+      hand: split[0],
+      wager: parseInt(split[1]),
+      rank: ranker(countKinds(split[0])),
+    });
+  });
+  return output;
+}
+
 export function countKinds(cards: string) {
   const result: Output[] = [];
   cards.split("").map((suit) => {
-    let suitValue = 0;
-    if (faceCards.includes(suit)) {
-      suitValue = faceCards.indexOf(suit) + 10;
-    } else {
-      suitValue = parseInt(suit, 10);
-    }
+    let suitValue = converter(suit);
 
     const existing = result.find((i) => i.value === suitValue);
     if (existing) {
@@ -24,17 +33,6 @@ export function countKinds(cards: string) {
   });
 
   return result;
-}
-
-export function evaluateHand(hand: Output[]) {
-  // const result: Result = {
-  //   fives: hand.find((suit) => suit.count == 5)?.value || 0,
-  //   fours: hand.find((suit) => suit.count == 4)?.value || 0,
-  //   threes: hand.find((suit) => suit.count == 3)?.value || 0,
-  //   twos: hand.filter((suit) => suit.count == 2)?.map((match) => match.value),
-  //   ones: hand.filter((suit) => suit.count == 1)?.map((match) => match.value),
-  // };
-  // return result;
 }
 
 export function ranker(result: Output[]) {
@@ -49,7 +47,6 @@ export function ranker(result: Output[]) {
   const twos = result
     .filter((suit) => suit.count == 2)
     ?.map((match) => match.value);
-
   if (threes && twos.length > 0) {
     return 5;
   }
@@ -65,4 +62,41 @@ export function ranker(result: Output[]) {
   return 1;
 }
 
-export function superSort(hands: Output[]) {}
+export function superSort(hands: ProcessedHand[]) {
+  return hands.sort((a, b) => {
+    if (b.rank != a.rank) {
+      return b.rank - a.rank;
+    } else {
+      for (let i = 0; i < 5; i++) {
+        if (a.hand[i] != b.hand[i]) {
+          return converter(b.hand[i]) - converter(a.hand[i]);
+        }
+      }
+      console.log("XXXXX");
+      return 0;
+    }
+  });
+}
+
+export function payOut(hands: ProcessedHand[]) {
+  const winnings: number[] = [];
+  hands.reverse().forEach((hand, index) => {
+    winnings.push(hand.wager * (index + 1));
+  });
+  return winnings;
+}
+
+export function addUp(winnings: number[]) {
+  return winnings.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0
+  );
+}
+
+function converter(value: string) {
+  if (faceCards.includes(value)) {
+    return faceCards.indexOf(value) + 10;
+  } else {
+    return parseInt(value, 10);
+  }
+}
