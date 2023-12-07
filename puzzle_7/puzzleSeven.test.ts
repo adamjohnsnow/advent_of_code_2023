@@ -1,5 +1,5 @@
 import { describe, expect, test } from "@jest/globals";
-import { countKinds, evaluateHand } from "./puzzleSeven";
+import { countKinds, evaluateHand, ranker } from "./puzzleSeven";
 
 describe("Puzzle 7", () => {
   test("count kinds", () => {
@@ -81,5 +81,27 @@ describe("Puzzle 7", () => {
       threes: 1,
       twos: [13],
     });
+  });
+
+  test("ranker", () => {
+    let hand = {
+      fives: 0,
+      fours: 0,
+      ones: [],
+      threes: 1,
+      twos: [13],
+    };
+
+    expect(ranker(hand).rank).toBe(5);
+
+    hand = {
+      fives: 12,
+      fours: 0,
+      ones: [],
+      threes: 0,
+      twos: [],
+    };
+
+    expect(ranker(hand).rank).toBe(7);
   });
 });
