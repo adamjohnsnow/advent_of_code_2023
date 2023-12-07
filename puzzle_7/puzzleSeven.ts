@@ -1,7 +1,17 @@
 const faceCards = ["T", "J", "Q", "K", "A"];
+type Result = {
+  fives: number;
+  fours: number;
+  threes: number;
+  twos: number[];
+  ones: number[];
+};
+
 type Output = {
   value: number;
   count: number;
+  rank?: number;
+  result?: Result;
 };
 
 export function countKinds(cards: string) {
@@ -24,14 +34,14 @@ export function countKinds(cards: string) {
   return result;
 }
 
-export function rankHand(hand: Output[]) {
-  hand.sort((a, b) => b.count - a.count);
-  let score = 0;
-  switch (hand[0].count) {
-    case 2: {
-      score = 200 + hand[0].value;
-      break;
-    }
-  }
-  return score;
+export function evaluateHand(hand: Output[]) {
+  const result: Result = {
+    fives: hand.find((suit) => suit.count == 5)?.value || 0,
+    fours: hand.find((suit) => suit.count == 4)?.value || 0,
+    threes: hand.find((suit) => suit.count == 3)?.value || 0,
+    twos: hand.filter((suit) => suit.count == 2)?.map((match) => match.value),
+    ones: hand.filter((suit) => suit.count == 1)?.map((match) => match.value),
+  };
+
+  return result;
 }
