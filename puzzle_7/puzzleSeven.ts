@@ -1,4 +1,4 @@
-const faceCards = ["T", "J", "Q", "K", "A"];
+const faceCards = ["T", "Q", "K", "A"];
 
 type Output = {
   value: number;
@@ -6,6 +6,7 @@ type Output = {
 };
 
 type ProcessedHand = { hand: string; wager: number; rank: number };
+
 export function processCards(hands: string[]) {
   let output: ProcessedHand[] = [];
   hands.forEach((hand) => {
@@ -36,30 +37,63 @@ export function countKinds(cards: string) {
 }
 
 export function ranker(result: Output[]) {
-  if (result.find((suit) => suit.count == 5)?.value) {
-    return 7;
-  }
-  if (result.find((suit) => suit.count == 4)?.value) {
-    return 6;
-  }
+  const jokers = result.find((suit) => suit.value == 1);
+  const jokersCount = jokers?.count || 0;
 
   const threes = result.find((suit) => suit.count == 3)?.value;
   const twos = result
     .filter((suit) => suit.count == 2)
     ?.map((match) => match.value);
+
+  if (
+    result.find((suit) => suit.count == 5)?.value ||
+    (threes === 1 && twos.length === 1) ||
+    (threes && threes > 1 && jokersCount == 2) ||
+    jokersCount === 4
+  ) {
+    return 7;
+  }
+
+  if (result.find((suit) => suit.count == 4)?.value) {
+    return 6 + jokersCount;
+  }
+
+  if (threes === 1 && twos.length === 0) {
+    return 6;
+  }
+
+  if (threes && threes > 1 && jokersCount === 1) {
+    return 6;
+  }
+
+  if (twos.length > 1 && jokersCount > 1) {
+    return 6;
+  }
+
+  if (twos.length == 2 && jokersCount === 1) {
+    return 5;
+  }
+
   if (threes && twos.length > 0) {
     return 5;
   }
+
   if (threes) {
     return 4;
   }
+  if (twos.length == 1 && jokersCount == 1) {
+    return 4;
+  }
+
   if (twos.length == 2) {
-    return 3;
+    return twos.length + 1 + jokersCount;
   }
+
   if (twos.length == 1) {
-    return 2;
+    return 2 + jokersCount;
   }
-  return 1;
+
+  return 1 + jokersCount;
 }
 
 export function superSort(hands: ProcessedHand[]) {
@@ -72,7 +106,6 @@ export function superSort(hands: ProcessedHand[]) {
           return converter(b.hand[i]) - converter(a.hand[i]);
         }
       }
-      console.log("XXXXX");
       return 0;
     }
   });
@@ -94,6 +127,9 @@ export function addUp(winnings: number[]) {
 }
 
 function converter(value: string) {
+  if (value === "J") {
+    return 1;
+  }
   if (faceCards.includes(value)) {
     return faceCards.indexOf(value) + 10;
   } else {
