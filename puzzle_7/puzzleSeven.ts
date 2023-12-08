@@ -1,4 +1,4 @@
-const faceCards = ["T", "J", "Q", "K", "A"];
+const faceCards = ["T", "Q", "K", "A"];
 
 type Output = {
   value: number;
@@ -39,6 +39,14 @@ export function ranker(result: Output[]) {
   if (result.find((suit) => suit.count == 5)?.value) {
     return 7;
   }
+
+  const jokers = result.find((suit) => suit.value == 1);
+  const jokerCount = jokers?.count || 0;
+
+  result.reduce((maxObject, currentObject) => {
+    return currentObject.count > maxObject.count ? currentObject : maxObject;
+  }).count += jokerCount;
+
   if (result.find((suit) => suit.count == 4)?.value) {
     return 6;
   }
@@ -47,9 +55,11 @@ export function ranker(result: Output[]) {
   const twos = result
     .filter((suit) => suit.count == 2)
     ?.map((match) => match.value);
+
   if (threes && twos.length > 0) {
     return 5;
   }
+
   if (threes) {
     return 4;
   }
@@ -94,6 +104,9 @@ export function addUp(winnings: number[]) {
 }
 
 function converter(value: string) {
+  if (value === "J") {
+    return 1;
+  }
   if (faceCards.includes(value)) {
     return faceCards.indexOf(value) + 10;
   } else {

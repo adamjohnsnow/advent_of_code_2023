@@ -32,7 +32,7 @@ describe("Puzzle 7", () => {
     expect(countKinds(cards)).toEqual([
       { value: 1, count: 1 },
       { value: 2, count: 1 },
-      { value: 13, count: 2 },
+      { value: 12, count: 2 },
       { value: 4, count: 1 },
     ]);
   });
@@ -43,7 +43,7 @@ describe("Puzzle 7", () => {
     expect(ranker(hand)).toBe(7);
 
     hand = [
-      { value: 1, count: 1 },
+      { value: 5, count: 1 },
       { value: 2, count: 1 },
       { value: 3, count: 1 },
       { value: 4, count: 2 },
@@ -52,7 +52,7 @@ describe("Puzzle 7", () => {
     expect(ranker(hand)).toBe(2);
 
     hand = [
-      { value: 1, count: 1 },
+      { value: 5, count: 1 },
       { value: 2, count: 1 },
       { value: 3, count: 1 },
       { value: 4, count: 1 },
@@ -62,11 +62,35 @@ describe("Puzzle 7", () => {
     expect(ranker(hand)).toBe(1);
 
     hand = [
-      { value: 13, count: 2 },
+      { value: 12, count: 2 },
       { value: 5, count: 3 },
     ];
 
     expect(ranker(hand)).toBe(5);
+
+    hand = [
+      { value: 1, count: 1 },
+      { value: 2, count: 1 },
+      { value: 3, count: 1 },
+      { value: 4, count: 1 },
+      { value: 4, count: 1 },
+    ];
+
+    expect(ranker(hand)).toBe(2);
+
+    expect(ranker(countKinds("KTJJT"))).toEqual(6);
+  });
+
+  test("process a card", () => {
+    let cards = ["T55J5 1", "K6J66 2"];
+    let result = superSort(processCards(cards));
+    expect(result[0].hand).toBe("K6J66");
+    expect(result[1].hand).toBe("T55J5");
+    expect;
+    cards = ["KJ666 4", "K6J66 3", "6J66J 1", "9J999 2"];
+
+    result = superSort(processCards(cards));
+    console.log(result);
   });
 
   test("process cards", () => {
@@ -78,7 +102,7 @@ describe("Puzzle 7", () => {
 
     expect(result[1].wager).toBe(684);
     expect(result[1].hand).toBe("T55J5");
-    expect(result[1].rank).toBe(4);
+    expect(result[1].rank).toBe(6);
 
     expect(result[2].wager).toBe(28);
     expect(result[2].hand).toBe("KK677");
@@ -89,14 +113,11 @@ describe("Puzzle 7", () => {
     const result = processCards(cards);
     const sorted = superSort(result);
 
-    console.log(sorted);
-    expect(sorted[0].wager).toBe(483);
-    expect(sorted[0].hand).toBe("QQQJA");
-    expect(sorted[0].rank).toBe(4);
-
-    expect(sorted[1].hand).toBe("T55J5");
-    expect(sorted[2].hand).toBe("KK677");
-    expect(sorted[3].hand).toBe("KTJJT");
+    // console.log(sorted);
+    expect(sorted[0].hand).toBe("KTJJT");
+    expect(sorted[1].hand).toBe("QQQJA");
+    expect(sorted[2].hand).toBe("T55J5");
+    expect(sorted[3].hand).toBe("KK677");
     expect(sorted[4].hand).toBe("32T3K");
   });
 
@@ -104,14 +125,31 @@ describe("Puzzle 7", () => {
     const result = processCards(cards);
     const sorted = superSort(result);
     const winnings = payOut(sorted);
-    console.log(winnings);
+    // console.log(winnings);
     expect(winnings[0]).toEqual(765 * 1);
-    expect(winnings[1]).toEqual(220 * 2);
-    expect(winnings[2]).toEqual(28 * 3);
-    expect(winnings[3]).toEqual(684 * 4);
-    expect(winnings[4]).toEqual(483 * 5);
+    expect(winnings[1]).toEqual(28 * 2);
+    expect(winnings[2]).toEqual(684 * 3);
+    expect(winnings[3]).toEqual(483 * 4);
+    expect(winnings[4]).toEqual(220 * 5);
 
-    expect(addUp(winnings)).toEqual(6440);
+    expect(addUp(winnings)).toEqual(5905);
+  });
+
+  test("small one", () => {
+    const result = processCards([
+      "9977J 677",
+      "2JA43 282",
+      "A4K79 728",
+      "K6J4K 266",
+      "K627J 757",
+      "4JJJK 713",
+      "QK3A5 600",
+      "52Q74 518",
+      "J777J 563",
+      "KJ393 176",
+    ]);
+    const sorted = superSort(result);
+    console.log(sorted);
   });
 
   test("big one", () => {
@@ -124,8 +162,8 @@ describe("Puzzle 7", () => {
       const result = processCards(lines);
       const sorted = superSort(result);
       const winnings = payOut(sorted);
-
-      expect(addUp(winnings)).toEqual(6440);
+      const final = addUp(winnings);
+      expect(final).toEqual(251037509);
     });
   });
 });
