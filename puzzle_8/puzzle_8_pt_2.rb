@@ -9,14 +9,12 @@ file_lines[2..-1].each do |line|
 end
 
 @elements = @map_hash.select {|key, _| key.end_with?("A") }
-p @elements
 results = []
 
 
-def follow_instructions(element)
+def follow_instructions(key, choices)
   count = 0
-  key = element[0]
-  choices = element[1]
+
   until key.end_with?("Z") do
     @instructions.each do |step|
       count += 1
@@ -27,9 +25,8 @@ def follow_instructions(element)
   count
 end
 
-@elements.each do |element|
-  results << follow_instructions(element)
-
+@elements.each do |key, choices| 
+  results << follow_instructions(key, choices)
 end
 
 p results
