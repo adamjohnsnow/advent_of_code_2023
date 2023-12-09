@@ -86,6 +86,13 @@ describe("puzzle nine", () => {
     });
   });
 
+  test("find previous number", () => {
+    let line = "10 13 16 21 30 45";
+    let processed = processLine(line);
+
+    expect(findPrevious(processed)).toEqual(5);
+  });
+
   test("test run - prev", () => {
     let answers: number[] = [];
     let sum = 0;
@@ -101,7 +108,26 @@ describe("puzzle nine", () => {
         sum += result;
         answers.push(result);
       });
-      expect(sum).toEqual(114);
+      expect(sum).toEqual(2);
+    });
+  });
+
+  test("gig run - prev", () => {
+    let answers: number[] = [];
+    let sum = 0;
+    fs.readFile("puzzle_9/input.txt", "utf8", (err, data) => {
+      if (err) {
+        console.error("Error reading the file:", err);
+        return 0;
+      }
+      const lines: string[] = data.split("\n");
+      lines.forEach((line) => {
+        const processed = processLine(line);
+        const result = findPrevious(processed);
+        sum += result;
+        answers.push(result);
+      });
+      expect(sum).toEqual(1089);
     });
   });
 });

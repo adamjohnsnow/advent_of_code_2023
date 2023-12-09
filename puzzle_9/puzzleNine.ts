@@ -43,10 +43,9 @@ export function findNext(input: number[][]): number {
 export function findPrevious(input: number[][]): number {
   let factor: number = input[input.length - 1][0];
   for (let i = input.length - 2; i > 0; i--) {
-    const last = input[i][input[i].length - 1];
-
-    factor = last + factor;
+    const last = input[i][0];
+    factor = last - factor;
   }
-  const result = input[0][input[0].length - 1] + factor;
+  const result = input[0][0] - factor;
   return result;
 }
