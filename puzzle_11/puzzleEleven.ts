@@ -1,26 +1,92 @@
-export function doubleRows(startMap: string[]): string[][] {
-  const newMap: string[][] = [];
-  startMap.forEach((line) => {
-    newMap.push(line.split(""));
+type Galaxy = { id: number; x: number; y: number };
+export type Report = {
+  map: string[][];
+  extraRows: number[];
+  extraCols: number[];
+  galaxies: Galaxy[];
+};
+
+export function expandsRows(starMap: string[]): Report {
+  const newReport: Report = {
+    map: [],
+    extraRows: [],
+    extraCols: [],
+    galaxies: [],
+  };
+  starMap.forEach((line, i) => {
+    newReport.map.push(line.split(""));
     if (!line.includes("#")) {
-      newMap.push(line.split(""));
+      newReport.extraRows.push(i);
     }
   });
-  return newMap;
+  return newReport;
 }
 
-export function doubleColumns(startMap: string[][]): string[][] {
-  const newMap: string[][] = [];
-
-  let transposedMap = startMap[0].map((_col, i) =>
-    startMap.map((row) => row[i])
+export function expandsColumns(report: Report): Report {
+  let transposedMap = report.map[0].map((_col, i) =>
+    report.map.map((row) => row[i])
   );
-  transposedMap.forEach((line) => {
-    newMap.push(line);
+  transposedMap.forEach((line, i) => {
     if (!line.includes("#")) {
-      newMap.push(line);
+      report.extraCols.push(i);
     }
   });
-  transposedMap = newMap[0].map((_col, i) => newMap.map((row) => row[i]));
-  return transposedMap;
+  return report;
+}
+
+export function findGalaxies(starMap: string[][]) {
+  const galaxies: Galaxy[] = [];
+
+  starMap.forEach((row, y) => {
+    row.forEach((char, x) => {
+      if (char === "#") {
+        galaxies.push({ id: galaxies.length + 1, y: y, x: x });
+      }
+    });
+  });
+
+  return galaxies;
+}
+
+export function calcDistances(report: Report, factor: number) {
+  const distances: number[] = [];
+  report.galaxies.forEach((galaxy, index) => {
+    for (let i = index + 1; i < report.galaxies.length; i++) {
+      let steps = 0;
+
+      const ys = [galaxy.y, report.galaxies[i].y];
+      for (let r = Math.min(...ys) + 1; r < Math.max(...ys) + 1; r++) {
+        if (report.extraRows.includes(r)) {
+          steps += factor;
+        }
+        steps += 1;
+      }
+
+      const xs = [galaxy.x, report.galaxies[i].x];
+      for (let c = Math.min(...xs) + 1; c < Math.max(...xs) + 1; c++) {
+        if (report.extraRows.includes(c)) {
+          steps += factor;
+        }
+        steps += 1;
+      }
+
+      distances.push(steps);
+      console.log(
+        galaxy,
+        report.galaxies[i],
+        steps,
+        report.extraCols,
+        report.extraRows
+      );
+    }
+  });
+  return distances;
+}
+
+export function getDistancesFromMap(report: Report, factor: number) {
+  const distances = calcDistances(report, factor);
+  return distances.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0
+  );
 }
