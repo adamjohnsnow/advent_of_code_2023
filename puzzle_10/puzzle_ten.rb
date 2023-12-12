@@ -16,9 +16,9 @@ y,x = find_start(@split_lines)
 
 @steps = 0
 def start_options(y,x)
-  return "N" unless  @split_lines[y-1][x] == "."
-  return "E" unless  @split_lines[y][x +1] == "."
-  return "S" unless  @split_lines[y+1][x] == "."
+  return "N" unless  @split_lines[y-1][x] == "." || @split_lines[y-1][x] == "L" || @split_lines[y-1][x] == "J"
+  return "E" unless  @split_lines[y][x +1] == "." || @split_lines[y][x+1] == "L" || @split_lines[y][x+1] == "F"
+  return "S" unless  @split_lines[y+1][x] == "." || @split_lines[y+1][x] == "7" || @split_lines[y+1][x] == "F"
   return "W"  
 end
 
@@ -26,7 +26,7 @@ def step(y,x,d)
   @steps += 1
   case d
   when "N"
-    return y-1, x,@split_lines[y-1][x]
+    return y - 1, x,@split_lines[y-1][x]
   when "E"
     return y, x + 1,@split_lines[y][x+1]
   when "S"
@@ -83,10 +83,50 @@ y,x,letter = step(y,x,direction)
 p "#{y},#{x},#{letter}, #{direction}"
 
 while letter != "S" do
+  case letter
+  when "|"
+    @split_lines[y][x] = "!"
+  when "-"
+    @split_lines[y][x] = "="
+  when "7"
+    @split_lines[y][x] = "¶"
+  else
+    @split_lines[y][x] = letter.downcase
+  end
+
   direction = next_direction(letter, direction)
   y,x,letter = step(y,x,direction)
 
   p "#{y},#{x},#{letter}, #{direction}"
 end
 
-p @steps/2
+
+inside_count = 0
+@split_lines.each do |line|
+  index = 0
+  inside = false
+  pending_turn = ""
+  while index < line.length
+    char = line[index]
+    if [".","F","L","7","J","|","-"].include?(char) && inside
+      line[index] = "I"
+      inside_count +=1
+    end
+    pending_turn = char if char == "l" || char == "f" || char == "S"
+    if char == "!" ||
+      (char == "j" && (pending_turn == "f" || pending_turn == "S")) ||
+      (char == "¶" && (pending_turn == "l" || pending_turn == "S"))
+      inside = !inside 
+    end
+    index += 1
+  end
+  p line.join('')
+end
+
+
+
+p "STEPS #{@steps/2}"
+
+
+
+p inside_count
