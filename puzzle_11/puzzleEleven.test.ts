@@ -100,8 +100,8 @@ describe("puzzle 11", () => {
       expect(report.galaxies.length).toEqual(9);
       expect(calcDistances(report, 1).length).toEqual(36);
       expect(getDistancesFromMap(report, 1)).toEqual(374);
-      // expect(getDistancesFromMap(report, 10)).toEqual(1030);
-      // expect(getDistancesFromMap(report, 100)).toEqual(8410);
+      expect(getDistancesFromMap(report, 10)).toEqual(1030);
+      expect(getDistancesFromMap(report, 100)).toEqual(8410);
     });
   });
 
