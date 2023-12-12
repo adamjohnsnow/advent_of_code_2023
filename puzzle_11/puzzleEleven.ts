@@ -57,7 +57,7 @@ export function calcDistances(report: Report, factor: number) {
       const ys = [galaxy.y, report.galaxies[i].y];
       for (let r = Math.min(...ys) + 1; r < Math.max(...ys) + 1; r++) {
         if (report.extraRows.includes(r)) {
-          steps += factor;
+          steps += factor - 1;
         }
         steps += 1;
       }
@@ -65,7 +65,7 @@ export function calcDistances(report: Report, factor: number) {
       const xs = [galaxy.x, report.galaxies[i].x];
       for (let c = Math.min(...xs) + 1; c < Math.max(...xs) + 1; c++) {
         if (report.extraCols.includes(c)) {
-          steps += factor;
+          steps += factor - 1;
         }
         steps += 1;
       }
@@ -78,7 +78,6 @@ export function calcDistances(report: Report, factor: number) {
 
 export function getDistancesFromMap(report: Report, factor: number) {
   const distances = calcDistances(report, factor);
-  console.log(distances);
   return distances.reduce(
     (accumulator, currentValue) => accumulator + currentValue,
     0

@@ -6,6 +6,14 @@ export function doubleRows(starMap: string[]): string[][] {
     newMap.push(line.split(""));
     if (!line.includes("#")) {
       newMap.push(line.split(""));
+      newMap.push(line.split(""));
+      newMap.push(line.split(""));
+      newMap.push(line.split(""));
+      newMap.push(line.split(""));
+      newMap.push(line.split(""));
+      newMap.push(line.split(""));
+      newMap.push(line.split(""));
+      newMap.push(line.split(""));
     }
   });
   return newMap;
@@ -18,6 +26,14 @@ export function doubleColumns(starMap: string[][]): string[][] {
   transposedMap.forEach((line) => {
     newMap.push(line);
     if (!line.includes("#")) {
+      newMap.push(line);
+      newMap.push(line);
+      newMap.push(line);
+      newMap.push(line);
+      newMap.push(line);
+      newMap.push(line);
+      newMap.push(line);
+      newMap.push(line);
       newMap.push(line);
     }
   });

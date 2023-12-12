@@ -83,8 +83,8 @@ describe("puzzle 11", () => {
       extraRows: [2],
     };
     data.galaxies = findGalaxies(data.map);
-    expect(calcDistances(data, 1)).toEqual([4, 7, 3]);
-    expect(calcDistances(data, 2)).toEqual([5, 9, 4]);
+    expect(calcDistances(data, 2)).toEqual([4, 7, 3]);
+    expect(calcDistances(data, 3)).toEqual([5, 9, 4]);
   });
 
   test("test run", async () => {
@@ -98,23 +98,24 @@ describe("puzzle 11", () => {
       report.galaxies = findGalaxies(report.map);
 
       expect(report.galaxies.length).toEqual(9);
-      expect(calcDistances(report, 1).length).toEqual(36);
-      expect(getDistancesFromMap(report, 1)).toEqual(374);
+      expect(calcDistances(report, 2).length).toEqual(36);
+      expect(getDistancesFromMap(report, 2)).toEqual(374);
       expect(getDistancesFromMap(report, 10)).toEqual(1030);
       expect(getDistancesFromMap(report, 100)).toEqual(8410);
     });
   });
 
-  // test("big run", async () => {
-  //   fs.readFile("puzzle_11/input.txt", "utf8", (err, data) => {
-  //     if (err) {
-  //       console.error("Error reading the file:", err);
-  //       return 0;
-  //     }
-  //     const lines: string[] = data.split("\n");
-  //     const report = expandsColumns(expandsRows(lines));
-
-  //     expect(getDistancesFromMap(report, 1)).toEqual(10885634);
-  //   });
-  // });
+  test("big run", () => {
+    fs.readFile("puzzle_11/input.txt", "utf8", (err, data) => {
+      if (err) {
+        console.error("Error reading the file:", err);
+        return 0;
+      }
+      const lines: string[] = data.split("\n");
+      const report = expandsColumns(expandsRows(lines));
+      report.galaxies = findGalaxies(report.map);
+      console.log(getDistancesFromMap(report, 1000000));
+      expect(getDistancesFromMap(report, 2)).toEqual(10885634);
+    });
+  });
 });
