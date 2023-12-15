@@ -5,7 +5,7 @@
 
 def loop_pattern(pattern, previous)
   (0..pattern.length - 2).each do |i|
-    next unless pattern[i] == pattern[i + 1] && i + 1 != previous
+    next unless pattern[i] == pattern[i + 1] && "#{@direction} #{i +1}" != "#{previous}"
 
     a = i
     b = i + 1
@@ -29,21 +29,29 @@ def fix_smudges(pattern)
     smudge = false
 
     while a >= 0 && b < pattern.length && !smudge
-      count = pattern[a].each_char.zip(pattern[b].each_char).count { |x, y| x != y }
+      count = 0
+      (0..pattern[a].length).each do |x|
+        count += 1 if pattern[a][x] != pattern[b][x]
+      end
 
       if count == 1
-        smudge = true
-        pattern[a] = pattern[b]
-        break
-      elsif count.zero?
-        a -= 1
-        b += 1
-      else
-        break
+        aa = a-1
+        bb = b+1
+        same = true
+        while aa >= 0 && bb < pattern[0].length && same
+          aa -=1
+          bb +=1
+          same = pattern[aa] == pattern[bb]
+        end
+        if same
+          smudge = true
+          pattern[a] = pattern[b]
+          return pattern
+        end
       end
     end
 
-    break if smudge
+    return pattern if smudge
   end
   pattern
 end
@@ -51,39 +59,44 @@ end
 def find_reflection
   @direction = "row"
   row_result = loop_pattern(@pattern[:original_rows], "x")
-  @pattern[:original_mirror] = row_result if row_result
+  @pattern[:original_mirror] = "row #{row_result}" if row_result
   @count += row_result * 100 if row_result
 
   @direction = "col"
   col_result = loop_pattern(@pattern[:original_cols], "x")
-  @pattern[:original_mirror] = col_result if col_result
+  @pattern[:original_mirror] = "col #{col_result}" if col_result
   @count += col_result if col_result
 
   @direction = "row"
   row_result = loop_pattern(@pattern[:cleaned_rows], @pattern[:original_mirror])
-  @pattern[:cleaned_mirror] = row_result * 100 if row_result
-  @cleaned_count += @pattern[:cleaned_mirror].to_i if row_result
+  @pattern[:cleaned_mirror] = "row #{row_result}"if row_result
+  @cleaned_count += row_result * 100 if row_result
 
   @direction = "col"
   col_result = loop_pattern(@pattern[:cleaned_cols], @pattern[:original_mirror])
-  @pattern[:cleaned_mirror] = col_result if col_result
+  @pattern[:cleaned_mirror] = "col #{col_result}" if col_result
   @cleaned_count += col_result if col_result
 
+  p "#{@pattern[:index]} orig: #{@pattern[:original_mirror]} clean: #{@pattern[:cleaned_mirror]}"
+  p @pattern[:original_rows], @pattern[:cleaned_rows]
 end
 
-file_lines = File.readlines('input.txt', chomp: true)
+file_lines = File.readlines('test.txt', chomp: true)
 result = file_lines.chunk { |x| x == "" }.reject { |condition, group| condition }.map(&:last)
 
 result.each_with_index do |pattern, index|
- @pattern = {
-  original_rows: pattern.dup,
-  original_cols: pattern.dup.map(&:chars).transpose.map(&:join),
-  original_mirror: nil,
-  cleaned_rows: fix_smudges(pattern.dup),
-  cleaned_cols: fix_smudges(pattern.map(&:chars).transpose.map(&:join)),
-  cleaned_mirror: nil
- }
- find_reflection
+  # if index == 0
+    @pattern = {
+      index: index,
+      original_rows: pattern.dup,
+      original_cols: pattern.dup.map(&:chars).transpose.map(&:join),
+      original_mirror: nil,
+      cleaned_rows: fix_smudges(pattern.dup),
+      cleaned_cols: fix_smudges(pattern.map(&:chars).transpose.map(&:join)),
+      cleaned_mirror: nil
+    }
+    find_reflection
+  # end
 end
 
 p "pt1 #{@count}"
